@@ -8,6 +8,8 @@ public class RequestSync : RealtimeComponent<RequestSyncModel>
     private string _translation;
     private bool _requested;
 
+    private string _Suggestions;
+
     private void Awake()
     {
         //_translation = GetComponent<string>();
@@ -20,18 +22,23 @@ public class RequestSync : RealtimeComponent<RequestSyncModel>
         {
             previousModel.translationDidChange -= TranslationStringDidChange;
             previousModel.requestedDidChange -= RequestedDidChange;
+            previousModel.suggestionsDidChange -= SuggestionsDidChange;
         }
         if (currentModel.isFreshModel)
         {
             currentModel.translation = _translation;
             currentModel.requested = _requested;
+            currentModel.suggestions = _Suggestions;
         }
 
         UpdateTranslationString();
         UpdateRequested();
+        UpdateSuggestions();
+
 
         currentModel.translationDidChange += TranslationStringDidChange;
         currentModel.requestedDidChange += RequestedDidChange;
+        currentModel.suggestionsDidChange += SuggestionsDidChange;
     }
 
     private void TranslationStringDidChange(RequestSyncModel model, string translationString)
@@ -43,6 +50,10 @@ public class RequestSync : RealtimeComponent<RequestSyncModel>
     {
         UpdateTranslationString();
     }
+    public void SuggestionsDidChange(RequestSyncModel model, string suggestions)
+    {
+        UpdateSuggestions();
+    }
 
     private void UpdateTranslationString()
     {
@@ -53,6 +64,13 @@ public class RequestSync : RealtimeComponent<RequestSyncModel>
     {
         _requested = model.requested;
     }
+
+ 
+    public void UpdateSuggestions()
+    {
+        _Suggestions = model.suggestions;
+    }
+    
 
     public void SetTranslation(string translation)
     {
@@ -73,5 +91,15 @@ public class RequestSync : RealtimeComponent<RequestSyncModel>
     {
         return model.requested;
     }
+    public void SetSuggestions(string suggestions)
+    {
+        model.suggestions = suggestions;
+    }
+    public string GetSuggestions()
+    {
+        return model.suggestions;
+    }
+    
+
 
 }

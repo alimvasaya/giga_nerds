@@ -38,6 +38,8 @@ namespace Samples.Whisper
         private bool madeRequest = false;
         private bool recievedRequest = false;
 
+        private ChatGPT chatGPT;
+
         private void Start()
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -66,7 +68,7 @@ namespace Samples.Whisper
             var index = PlayerPrefs.GetInt("user-mic-device-index");
             dropdown.SetValueWithoutNotify(index);
 
-            
+            chatGPT = FindObjectOfType<ChatGPT>();
 #endif
         }
 
@@ -148,9 +150,17 @@ namespace Samples.Whisper
 
             progressBar.fillAmount = 0;
 
-            // Display API text to UI
+ 
             _translationString = $"{targetLanguage.ToUpper()}: {res.Text}";
+            // chat gpt send messages and call the sendreply fucnitons
+
+
             _requestSync.SetTranslation(_translationString);
+            _requestSync.SetSuggestions(_translationString);
+            if (chatGPT != null)
+            {
+                chatGPT.SetInputFieldText(res.Text); // Set input field text in ChatGPT
+            }
             message.text = "Translation sucessfully sent";
             recievedRequest = true;
             recordButton.enabled = true;
@@ -213,6 +223,7 @@ namespace Samples.Whisper
                     isRecording = false;
                     _requestSync.SetRequested(false);
                     EndRecording();
+
                     recievedRequest = true;
                 }
             }

@@ -39,19 +39,11 @@ namespace OpenAI
 
         private async void SendReply()
         {
-            string userInput = inputField.text;
-            if (!string.IsNullOrEmpty(WhisperMessageHolder.whisperMessage))
-            {
-                userInput = WhisperMessageHolder.whisperMessage;
-                WhisperMessageHolder.whisperMessage = null; // Reset the whisper message
-            }
-
             var newMessage = new ChatMessage()
             {
                 Role = "user",
-                Content = userInput
+                Content = inputField.text
             };
-
             
             AppendMessage(newMessage);
 
@@ -72,11 +64,14 @@ namespace OpenAI
 
             if (completionResponse.Choices != null && completionResponse.Choices.Count > 0)
             {
-                var message = completionResponse.Choices[0].Message;
-                message.Content = message.Content.Trim();
-                
-                messages.Add(message);
-                AppendMessage(message);
+                for (int i = 0; i < Mathf.Min(completionResponse.Choices.Count, 3); i++)
+                {
+                    var message = completionResponse.Choices[i].Message;
+                    message.Content = message.Content.Trim();
+
+                    messages.Add(message);
+                    AppendMessage(message);
+                }
             }
             else
             {
@@ -93,6 +88,6 @@ namespace OpenAI
                 inputField.text = text;
             }
         }
-
     }
+     
 }
